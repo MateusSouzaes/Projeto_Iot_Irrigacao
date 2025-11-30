@@ -1,0 +1,43 @@
+{{> layout }}
+
+<div class="row">
+
+  <!-- CARD: Consumo Hídrico -->
+  <div class="col-md-4 mb-4">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <h5 class="card-title text-success">💧 Consumo Hídrico</h5>
+        {{#if status}}
+          <p class="display-6 fw-bold">{{status.consumo_hidrico}} L</p>
+          <small class="text-muted">Modo: {{status.modo_irrigacao}}</small><br>
+          <small class="text-muted">Início: {{status.dt_inicial}}</small>
+        {{else}}
+          <p class="text-muted">Nenhuma irrigação registrada.</p>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+
+  <!-- LISTA DE ÚLTIMAS LEITURAS -->
+  <div class="col-md-8 mb-4">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <h5 class="card-title text-primary">📈 Últimas Leituras do Sensor</h5>
+
+        {{#if lista.length}}
+          <ul class="list-group">
+            {{#each lista}}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span class="text-muted">{{dt_inicial}}</span>
+                <strong>{{consumo_hidrico}} L</strong>
+              </li>
+            {{/each}}
+          </ul>
+        {{else}}
+          <p class="text-muted">Nenhuma leitura registrada.</p>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+
+</div>

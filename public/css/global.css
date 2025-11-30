@@ -1,0 +1,253 @@
+html,
+body {
+  height: 100%;
+  background-color: #E8F2ED;
+}
+
+#layoutSidenav {
+  display: flex;
+}
+
+#layoutSidenav #layoutSidenav_nav {
+  width: 220px !important; 
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1038;
+
+}
+
+#layoutSidenav #layoutSidenav_content {
+  position: relative;
+  flex-grow: 1;
+  margin-left: 220px !important;
+  transition: margin-left 0.3s ease;
+}
+
+.nav-button {
+  margin-top: 15px;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.75rem;
+  width: 90%;
+  background-color: #133E34; 
+  border: none;
+  color: #DCE8E3; 
+  padding: 0.75rem 1rem;
+  font-size: 1.05rem; 
+  cursor: pointer;
+  text-align: left;
+  border-radius: 10px; 
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); 
+  transition: all 0.3s ease;;
+}
+
+.nav-button:hover {
+  background-color: #165042; 
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);  
+}
+
+.nav-button i {
+  font-size: 1.5rem !important;
+}
+
+a.nav-link-btn {
+  margin-top: 15px;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.75rem;
+  width: 75%;
+  background-color: #133E34;
+  color: #DCE8E3;
+  padding: 0.75rem 1rem;
+  font-size: 1.05rem;
+  text-decoration: none;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-align: left;
+}
+
+a.nav-link-btn:hover {
+  background-color: #165042;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  text-decoration: none;
+  color: #E8F2ED;
+}
+
+a.nav-link-btn i {
+  font-size: 1.5rem;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.sb-sidenav-menu .nav {
+  margin-top: 70px; /* ajuste o valor conforme o quanto quiser descer */
+}
+
+.sb-sidenav .nav-link:hover {
+  background-color: #11534c; 
+}
+
+
+.sb-sidenav .nav-link .sb-nav-link-icon {
+  margin-right: 0.75rem;
+  font-size: 1.25rem;
+  color: #B2DFDB;
+
+}
+
+.logo-container {
+  position: fixed;         
+  top: 20px;               
+  left: 25px;              
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  z-index: 99999;          
+  pointer-events: none;    
+}
+
+.sidebar-logo {
+  height: 65px;
+  border-radius: 8px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+}
+
+.logo-nome {
+  font-family: 'Lora', serif;
+  font-weight: 600;
+  font-size: 1.6rem;
+  color: #C7D7CF;              
+  letter-spacing: 0.5px;
+  margin: -15px 0 0 0;  
+  line-height: 1;
+  text-transform: capitalize;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.logo-nome span {
+  color: #A4C3A2;              
+  font-weight: 700;
+  font-size: 1.8rem;
+  margin-left: 2px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.sb-nav-fixed .sb-topnav {
+  z-index: 1039;
+}
+.sb-nav-fixed #layoutSidenav #layoutSidenav_nav {
+  width: 80px;
+}
+.sb-nav-fixed #layoutSidenav #layoutSidenav_nav .sb-sidenav {
+  padding-top: 56px;
+}
+.sb-nav-fixed #layoutSidenav #layoutSidenav_nav .sb-sidenav .sb-sidenav-menu {
+  overflow-y: auto;
+}
+.sb-nav-fixed #layoutSidenav #layoutSidenav_content {
+  padding-left: 30px;
+  padding-right: 30px;
+  top: 50px;
+}
+
+.nav .nav-link .sb-nav-link-icon,
+.sb-sidenav-menu .nav-link .sb-nav-link-icon {
+  margin-right: 0.5rem;
+}
+
+
+.user-info {
+  top: 10px;
+  right: 25px;
+  display: flex;
+  flex-direction: column;     
+  align-items: center;        
+  justify-content: center;
+  gap: 0.3rem;
+  padding: 12px 18px;         
+  border-radius: 12px;
+  background: #1A5748;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+  width: 130px;                
+  height: 70px;              
+  text-align: center;         
+  z-index: 999999;
+  transition: all 0.3s ease;
+}
+
+.user-info i {
+  font-size: 50rem  ;            
+  color: #A4C3A2 ;
+}
+
+
+.user-info span {
+  font-size: 0.85rem;
+  color: #E5F1EC;
+}
+
+.sb-sidenav {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  flex-wrap: nowrap;
+}
+.sb-sidenav .sb-sidenav-menu {
+  flex-grow: 1;
+}
+.sb-sidenav .sb-sidenav-menu .nav {
+  flex-direction: column;
+  flex-wrap: nowrap;
+}
+.sb-sidenav .sb-sidenav-menu .nav .sb-sidenav-menu-heading {
+  padding: 1.75rem 1rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+.sb-sidenav .sb-sidenav-menu .nav .nav-link {
+  display: flex;
+  align-items: center;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  position: relative;
+}

@@ -1,0 +1,141 @@
+/* ==== Estilização da Página de Listagem de Plantas ==== */
+
+/* Container principal */
+.container {
+  margin-left: 240px;              /* distância da sidebar */
+  max-width: calc(100% - 260px);   /* aproveita o restante da tela */
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 25px 35px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e0e0e0;
+}
+
+/* Título */
+.container h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1a5748;
+  border-bottom: 2px solid #1a5748;
+  padding-bottom: 8px;
+  margin-bottom: 25px;
+}
+
+/* Barra de pesquisa e botão de cadastro */
+.d-flex.mb-4 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+form.d-flex {
+  flex-grow: 1;
+  max-width: 500px;
+}
+
+input[type="search"] {
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  transition: 0.3s;
+}
+
+input[type="search"]:focus {
+  border-color: #1a5748;
+  box-shadow: 0 0 5px rgba(26, 87, 72, 0.3);
+  outline: none;
+}
+
+.btn-primary {
+  background-color: #1a5748;
+  border: none;
+  transition: 0.3s;
+}
+
+.btn-primary:hover {
+  background-color: #15503f;
+}
+
+.btn-success {
+  background-color: #4caf50;
+  border: none;
+  transition: 0.3s;
+}
+
+.btn-success:hover {
+  background-color: #3d9140;
+}
+
+/* ==== Tabela ==== */
+.table {
+  margin-top: 20px;
+  border-radius: 10px;
+  overflow: hidden;
+  border-collapse: collapse;
+}
+
+.table thead {
+  background-color: #1a5748;
+  color: white;
+}
+
+.table th {
+  font-weight: 600;
+  text-align: center;
+  padding: 12px;
+  font-size: 0.95rem;
+}
+
+.table td {
+  text-align: center;
+  vertical-align: middle;
+  padding: 10px;
+  font-size: 0.9rem;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: #f8f9fa;
+}
+
+/* Ações */
+.btn-warning {
+  background-color: #ffb300;
+  border: none;
+  transition: 0.3s;
+}
+
+.btn-warning:hover {
+  background-color: #e09b00;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  border: none;
+  transition: 0.3s;
+}
+
+.btn-danger:hover {
+  background-color: #b71c1c;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .container {
+    margin-left: 0;
+    padding: 20px;
+    max-width: 100%;
+  }
+
+  form.d-flex {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btn-success {
+    margin-top: 10px;
+  }
+
+  .table th, .table td {
+    font-size: 0.85rem;
+  }
+}
