@@ -33,10 +33,21 @@ export class EspService implements OnModuleInit {
    *  Retorna inteiro 0..100.
    */
   private umidadePercentFromAnalog(valor: number): number {
-    const v = Math.max(0, Math.min(1023, Number(valor ?? 0)));
-    const percent = (1 - v / 1023) * 100;
-    return Math.round(percent);
-  }
+  const dry = 1023;     // leitura = seco (0%)
+  const wet = 632;      // leitura = úmido (100%) — ajuste conforme sua calibração
+
+  // valor bruto (fallback para dry se undefined)
+  let v = Number(valor ?? dry);
+
+  // Se wet >= dry, evita divisão por zero
+  if (wet >= dry) return v <= wet ? 100 : 0;
+
+  // Clamp entre wet e dry (valores mais úmidos que 'wet' ficam 100%)
+  v = Math.max(Math.min(v, dry), wet);
+
+  const percent = (1 - (v - wet) / (dry - wet)) * 100;
+  return Math.round(percent);
+}
 
   /** Converte leitura HL-83 em "porcentagem de chuva" (aprox):
    *  HL-83: 0 = molhado, 1023 = seco -> invertendo para 0..100% chuva
@@ -73,7 +84,7 @@ export class EspService implements OnModuleInit {
     const lv = Number(leituraFluxo ?? 0);
 
     // ruído/padrão do sensor: se <= 100 considerar fechado/zero
-    if (lv <= 100) return 0;
+    if (lv <= 150) return 0;
 
     const f = lv / 10.0; // "pulsos" aproximados
     const Q_Lmin = f / 7.5;
@@ -136,7 +147,7 @@ export class EspService implements OnModuleInit {
   async buscarStatusESP() {
     try {
       // tipando resposta como any evita problemas de acesso às propriedades
-      const resposta = await axios.get<any>('http://192.168.107.136/status', {
+      const resposta = await axios.get<any>('http://192.168.214.136/status', {
         timeout: 8000,
       });
 
@@ -164,7 +175,15 @@ export class EspService implements OnModuleInit {
       const dataFormatada = this.formatarData(rawData ?? rawHora ?? Date.now());
 
       // retorno com brutos + display formatado (usado pelo front)
+      // OBS: mapear campos para manter compatibilidade com o front-end
+      const volumeLitros = Number((volumeTotal_mL / 1000).toFixed(3));
+
       return {
+        // campos de topo que o front consultava diretamente
+        ip,
+        ultimaAtualizacao: dataFormatada,
+        online,
+
         raw: {
           chuva: rawChuva,
           umidade: rawUmidade,
@@ -175,17 +194,13 @@ export class EspService implements OnModuleInit {
           online,
         },
 
+        // display com os nomes que o template espera
         display: {
-          chuvaPercent: `${chuvaPercent}%`,
-          chuvaNivel, // string do nível
-          umidadePercent: `${umidadePercent}%`,
-
-          // fluxo em mL/min e volume total em mL
-          fluxo_mL_min: `${fluxo_mLmin} mL/min`,
-          volume_total_mL: `${volumeTotal_mL} mL`,
-
-          // data formatada para exibição
-          dataFormatada,
+          chuva: `${chuvaNivel} (${chuvaPercent}%)`,
+          umidade: `${umidadePercent}%`,
+          fluxo_ml_min: `${fluxo_mLmin} mL/min`,
+          volume_l_total: `${volumeLitros} L`,
+          data: dataFormatada,
           ip,
           online,
         },
@@ -194,14 +209,16 @@ export class EspService implements OnModuleInit {
       console.error('Erro ao buscar status do ESP:', (error as any)?.message ?? error);
       return {
         error: 'Não foi possível conectar ao ESP',
+        ip: '--',
+        ultimaAtualizacao: '--',
+        online: false,
         raw: null,
         display: {
-          chuvaPercent: '--',
-          chuvaNivel: '--',
-          umidadePercent: '--',
-          fluxo_mL_min: '--',
-          volume_total_mL: '--',
-          dataFormatada: '--',
+          chuva: '--',
+          umidade: '--',
+          fluxo_ml_min: '--',
+          volume_l_total: '--',
+          data: '--',
           ip: '--',
           online: false,
         },

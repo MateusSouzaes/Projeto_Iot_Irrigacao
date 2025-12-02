@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class EspService {
   async pegarDados() {
-    const ESP_IP = "http://192.168.0.35/api/sensores"; // coloque o IP do seu ESP
+    const ESP_IP = "http://192.168.214.136/api/sensores"; // coloque o IP do seu ESP
 
     try {
       const response = await fetch(ESP_IP);
