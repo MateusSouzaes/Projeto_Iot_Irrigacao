@@ -134,79 +134,92 @@ export class EspService implements OnModuleInit {
   // MÉTODO PÚBLICO: buscar status do ESP e formatar para o front
   // -------------------------------------------------------------
   async buscarStatusESP() {
-    try {
-      // tipando resposta como any evita problemas de acesso às propriedades
-      const resposta = await axios.get<any>('http://192.168.107.136/status', {
-        timeout: 8000,
-      });
+    // URL do ESP pode ser configurada por variável de ambiente ESP_URL
+    const espUrl = (process.env.ESP_URL && process.env.ESP_URL.trim())
+      ? process.env.ESP_URL.trim().replace(/\/+$/, '')
+      : 'http://192.168.214.136';
 
-      // aqui dados tem tipo any e o TS não reclamará ao acessar propriedades
-      const dados = resposta.data;
+    const maxRetries = 2;
+    const timeoutMs = 8000;
+    let dados: any = null;
+    let lastError: any = null;
 
-      // valores brutos do ESP (tente manter os nomes que o ESP envia)
-      const rawChuva = Number(dados?.chuva ?? dados?.rain ?? 1023);
-      const rawUmidade = Number(dados?.umidade ?? dados?.humidity ?? 0);
-      const rawFluxo = Number(dados?.fluxo ?? dados?.flow ?? 0);
-      const rawHora = dados?.hora ?? undefined;
-      const rawData = dados?.data ?? undefined;
-      const ip = dados?.ip ?? undefined;
-      const online = typeof dados?.online === 'boolean' ? dados.online : true;
-      console.log('Dados brutos recebidos do ESP:', dados);
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        const url = `${espUrl}/status`;
+        const resposta = await axios.get<any>(url, { timeout: timeoutMs });
+        dados = resposta.data;
+        break;
+      } catch (err) {
+        lastError = err;
+        if (attempt < maxRetries) await new Promise((r) => setTimeout(r, 400));
+      }
+    }
 
-      // processamento
-      const chuvaPercent = this.chuvaPercentFromAnalog(rawChuva); // 0..100
-      const chuvaNivel = this.nivelChuvaFromAnalog(rawChuva);
-      const umidadePercent = this.umidadePercentFromAnalog(rawUmidade);
-
-      const fluxo_mLmin = this.fluxoEstimado_MLporMin(rawFluxo); // mL/min
-      const volumeTotal_mL = this.atualizarVolumeAcumulado(rawFluxo); // mL acumulado
-
-      const dataFormatada = this.formatarData(rawData ?? rawHora ?? Date.now());
-
-      // retorno com brutos + display formatado (usado pelo front)
-      return {
-        raw: {
-          chuva: rawChuva,
-          umidade: rawUmidade,
-          fluxo: rawFluxo,
-          hora: rawHora,
-          data: rawData,
-          ip,
-          online,
-        },
-
-        display: {
-          chuvaPercent: `${chuvaPercent}%`,
-          chuvaNivel, // string do nível
-          umidadePercent: `${umidadePercent}%`,
-
-          // fluxo em mL/min e volume total em mL
-          fluxo_mL_min: `${fluxo_mLmin} mL/min`,
-          volume_total_mL: `${volumeTotal_mL} mL`,
-
-          // data formatada para exibição
-          dataFormatada,
-          ip,
-          online,
-        },
-      };
-    } catch (error) {
-      console.error('Erro ao buscar status do ESP:', (error as any)?.message ?? error);
+    if (!dados) {
+      console.error('Falha ao conectar no ESP:', (lastError as any)?.message ?? lastError);
       return {
         error: 'Não foi possível conectar ao ESP',
+        ip: '--',
+        ultimaAtualizacao: '--',
+        online: false,
         raw: null,
         display: {
-          chuvaPercent: '--',
-          chuvaNivel: '--',
-          umidadePercent: '--',
-          fluxo_mL_min: '--',
-          volume_total_mL: '--',
-          dataFormatada: '--',
+          chuva: '--',
+          umidade: '--',
+          fluxo_ml_min: '--',
+          volume_l_total: '--',
+          data: '--',
           ip: '--',
           online: false,
         },
       };
     }
+
+    // aqui dados foi obtido do ESP
+    const rawChuva = Number(dados?.chuva ?? dados?.rain ?? 1023);
+    const rawUmidade = Number(dados?.umidade ?? dados?.humidity ?? 0);
+    const rawFluxo = Number(dados?.fluxo ?? dados?.flow ?? 0);
+    const rawHora = dados?.hora ?? undefined;
+    const rawData = dados?.data ?? undefined;
+    const ip = dados?.ip ?? undefined;
+    const online = typeof dados?.online === 'boolean' ? dados.online : true;
+    console.log('Dados brutos recebidos do ESP:', dados);
+
+    const chuvaPercent = this.chuvaPercentFromAnalog(rawChuva);
+    const chuvaNivel = this.nivelChuvaFromAnalog(rawChuva);
+    const umidadePercent = this.umidadePercentFromAnalog(rawUmidade);
+    const fluxo_mLmin = this.fluxoEstimado_MLporMin(rawFluxo);
+    const volumeTotal_mL = this.atualizarVolumeAcumulado(rawFluxo);
+    const dataFormatada = this.formatarData(rawData ?? rawHora ?? Date.now());
+
+    const volumeLitros = Number((volumeTotal_mL / 1000).toFixed(3));
+
+    const resultado = {
+      ip,
+      ultimaAtualizacao: dataFormatada,
+      online,
+      raw: {
+        chuva: rawChuva,
+        umidade: rawUmidade,
+        fluxo: rawFluxo,
+        hora: rawHora,
+        data: rawData,
+        ip,
+        online,
+      },
+      display: {
+        chuva: `${chuvaNivel} (${chuvaPercent}%)`,
+        umidade: `${umidadePercent}%`,
+        fluxo_ml_min: `${fluxo_mLmin} mL/min`,
+        volume_l_total: `${volumeLitros} L`,
+        data: dataFormatada,
+        ip,
+        online,
+      },
+    };
+
+    return resultado;
   }
 
   // opcional: rota que recebe leitura POST do ESP
