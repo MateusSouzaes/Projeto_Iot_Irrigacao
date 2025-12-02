@@ -194,8 +194,8 @@ void tomarDecisaoIrrigacao() {
 
   bool horarioPermitido = true; // depois vem do banco
 
-  bool soloSeco = (umidadeArduino >= 700);
-  bool semChuvaAgora = (chuvaArduino >= 700);
+  bool soloSeco = (umidadeArduino >= 500);
+  bool semChuvaAgora = (chuvaArduino >= 500);
   bool semChuva8h = !chanceChuvaAlta;
 
   if (horarioPermitido && soloSeco && semChuvaAgora && semChuva8h) {

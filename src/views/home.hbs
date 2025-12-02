@@ -442,13 +442,12 @@
 <script>
 async function atualizarStatusESP() {
   try {
-    const resp = await fetch('/status');
+    const resp = await fetch('/esp/status');
     if (!resp.ok) throw new Error('Erro no servidor');
 
     const dados = await resp.json();
 
     const display = dados?.display ?? {};
-
 
     document.getElementById("sensorChuva").innerText =
       display.chuva ?? "--";
